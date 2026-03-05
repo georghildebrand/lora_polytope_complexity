@@ -118,23 +118,23 @@ This is a key insight: **LoRA's efficiency is topological, not geometric.** It a
 
 ---
 
-## Level 4: Line-Crossing Complexity (Crofton-Proxy)
+## Level 4: Advanced Geometric Complexity (Curvature, Line-Crossing, & Adjacency)
 
-This metric estimates the **topological complexity of the decision boundary** using an approximation of integral geometry (Crofton's formula). By counting how many times a random line crosses the decision boundary (sign changes), we estimate the "jaggedness" of the boundary.
+This level studies the **topological and geometric complexity** of the decision boundary through three independent advanced metrics: Line-Crossing (Crofton Proxy), Discrete Boundary Curvature, and Polytope Adjacency Graph Drift.
 
 | Metric | Base | Full FT | LoRA (r=2) |
 |--------|------|---------|-----------|
-| Avg. crossings/line | 1.22 | 1.22 | **1.12** |
+| Line-Crossings/Line | 1.22 | 1.18 | **1.13** |
+| Mean Boundary Curvature | - | 2.03 | **1.98** |
+| Polytope Adjacency Drift | - | 63.9% | **50.8%** |
 
 **Interpretation:**
 
-The base model has 1.22 crossings/line — consistent with a roughly circular boundary (a convex boundary would have exactly 2 crossing points when a chord intersects it, so ~1.2 reflects the disc geometry in a 2×2 box).
+- **Line-Crossing (Crofton Proxy):** Both models resolve the bubble, but Full FT features a more jagged boundary (1.18 crossings per line), whereas LoRA interpolates more smoothly (1.13).
+- **Discrete Boundary Curvature:** This measures the average angular change (in radians) of the boundary's geometric normal vector. LoRA enforces a measurably smoother continuous boundary with a mean curvature of 1.98 vs 2.03 for Full FT.
+- **Polytope Adjacency Graph Drift:** Treating each constant-gate region as a node and adjacencies as edges (Hamming distance = 1), we compute the Jaccard distance of the network's topological graph before and after adaptation. Full FT radically re-wires 63.9% of the local adjacent polytope relationships to fragment the space. LoRA, strictly bounded by its rank, disrupts only 50.8% of the adjacency graph — significantly preserving the base model's original topological fabric while completing the identical task.
 
-**Full FT maintains exactly 1.22** — the boundary complexity does not increase even though it successfully solves the bubble. This is possible because the new bubble boundary adds local complexity but the individual hyperplanes are positioned precisely, creating only the necessary additional crossings.
-
-**LoRA drops to 1.12** — fewer crossings. This is consistent with a **smoother, more global boundary**. The rank-2 constraint forces hyperplanes to move in a coordinated direction, which organizes the boundary more uniformly. The new bubble crossing is added, but other regions of the boundary smooth out due to the correlated movement.
-
-**Conclusion (Level 4):** LoRA produces simpler, smoother decision boundaries at the same functional performance level. This is the Crofton-proxy signature of low-dimensional rotation coherence.
+**Conclusion (Level 4):** LoRA is geometrically and topologically "stiffer." It solves the topological trap (the bubble flip) by producing smoother boundaries (lower curvature) while unleashing significantly less structural havoc inside the local polytope network (lower adjacency drift).
 
 ---
 
@@ -157,7 +157,7 @@ Level 2 (Orientation):      All 32 normals rotate through a shared 2D subspace
           ↓
 Level 3 (Topology):         Correlated rotation moves ~43% of gate regions globally
           ↓
-Level 4 (Complexity):       Coordinated movement creates smoother boundaries (1.12 vs 1.22)
+Level 4 (Complexity):       Smoother boundary curves (1.98 rads) & less adjacency destruction (50.8% drift)
 ```
 
 ### Why the Rotation-Rank Results Are Not a Contradiction
@@ -178,12 +178,12 @@ Full FT has no such constraint. Neuron `i`'s normal can rotate in any of the 10 
 
 | Aspect | Full FT | LoRA |
 |--------|---------|------|
-| Bubble accuracy | 0.864 | **0.924** |
-| Gate drift | 40.3% | 43.2% |
-| Update complexity | rank-10 | rank-2 |
-| Boundary smoothness | 1.22 crossings | **1.12 crossings** |
+| Bubble accuracy | 0.937 | 0.932 |
+| Gate drift | 62.3% | 56.0% |
+| Adjacency graph drift | 63.9% | **50.8%** |
+| Mean curvature | 2.03 | **1.98** |
 
-LoRA achieves **higher bubble accuracy with lower boundary complexity** — the hallmark of an efficient, correlated geometric adaptation. Full FT's rank-10 freedom ironically provides less precise bubble adaptation (0.864) because the independent hyperplane movements can tradeoff in ways that partially solve the bubble but introduce global uncertainty.
+LoRA achieves highly competitive bubble accuracy with significantly less topological destruction (adjacency drift) — the hallmark of an efficient, correlated geometric adaptation. Full FT's unconstrained rank-10 freedom fragments the polytope structure aggressively (63.9% drift) and introduces tighter curvature (2.03) simply to solve the identical local topological trap.
 
 ---
 

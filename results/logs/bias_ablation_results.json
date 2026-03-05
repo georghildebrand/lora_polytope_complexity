@@ -1,0 +1,22 @@
+{
+    "frozen": {
+        "full_ft": {
+            "rank": 10,
+            "stable_rank": 1.1280860900878906
+        },
+        "lora": {
+            "rank": 2,
+            "stable_rank": 1.0
+        }
+    },
+    "trainable": {
+        "full_ft": {
+            "rank": 10,
+            "stable_rank": 1.1424249410629272
+        },
+        "lora": {
+            "rank": 2,
+            "stable_rank": 1.0
+        }
+    }
+}

@@ -83,16 +83,19 @@ conda activate plora
 # Install dependencies
 pip install -r requirements.txt
 
-# Run experiment
-python experiment.py
+# Run baseline experiment
+python -m experiments.run_baseline
+
+# Run bias ablation
+python -m experiments.run_bias_ablation
+
+# Run depth study
+python -m experiments.run_depth
 ```
 
 Outputs:
-- `results.json` — machine-readable numeric results
-- `figures/decision_boundaries.png`
-- `figures/gate_drift.png`
-- `figures/sv_spectra.png`
-- `figures/metric_summary.png`
+- `results/logs/` — machine-readable numeric results (JSON)
+- `results/figures/` — generated plots
 
 ---
 
@@ -117,16 +120,28 @@ See [`evaluation.md`](evaluation.md) for full analysis and figures.
 
 ```
 .
-├── experiment.py       # Main experiment script
-├── requirements.txt    # Python dependencies
-├── results.json        # Numeric outputs (auto-generated)
-├── figures/            # Visualisation outputs (auto-generated)
-│   ├── decision_boundaries.png
-│   ├── gate_drift.png
-│   ├── sv_spectra.png
-│   └── metric_summary.png
-├── evaluation.md       # Scientific report & interpretation
-└── README.md           # This file
+├── models/
+│   ├── mlp.py              # Base MLP model
+│   ├── lora_layer.py       # LoRA implementation for first layer
+│   ├── deep_mlp.py         # Deep MLP model and LoRA variant
+│   └── utils.py            # Data sampling and training utilities
+├── metrics/
+│   ├── gate_drift.py       # ReLU gate pattern drift metric
+│   ├── line_crossing.py    # Crofton complexity proxy
+│   ├── rotation_rank.py    # Update rank and rotation metrics
+│   └── curvature.py        # Discrete boundary curvature
+├── experiments/
+│   ├── run_baseline.py      # Original experiment replicating baseline
+│   ├── run_bias_ablation.py # Bias frozen vs trainable ablation
+│   └── run_depth.py         # Study on effects of network depth
+├── scripts/
+│   └── plot_results.py      # Plotting and visualization suite
+├── results/
+│   ├── logs/               # JSON results and logs
+│   └── figures/            # Generated plots
+├── requirements.txt        # Python dependencies
+├── evaluation.md           # Scientific report & interpretation
+└── README.md               # This file
 ```
 
 ---
