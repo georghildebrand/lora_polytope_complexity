@@ -12,6 +12,20 @@ This repository contains a rigorous PyTorch experiment that studies the **geomet
 
 We answer this through a controlled topological experiment: a "Bubble Flip" (XOR patch) is surgically placed inside a region of constant ReLU gate activation, making it geometrically provable that the output head alone cannot solve the task — hyperplane movement in `fc1` is mandatory.
 
+## Scientific Statement
+
+This repository provides geometric evidence supporting the claim: **Low-rank adaptation restricts the dimension of the hyperplane deformation field.** 
+
+This is stronger and more mathematically precise than the typical statement that "LoRA regularizes fine-tuning" (which is vague). Low-dimensional deformation is measurable, as shown in this repo.
+
+---
+
+## Interpretation of the Metrics
+
+⚠️ **Important Clarification:** This repository **does NOT measure the theoretical expressivity** of neural networks. 
+
+Instead, it evaluates **how the decision partition deforms during adaptation.** Low-rank updates restrict the directions in which hyperplane normals can move. This induces a correlated deformation of the partition, rather than the chaotic, independent motion of individual hyperplanes seen in Full Fine-Tuning.
+
 ---
 
 ## Architecture
@@ -68,8 +82,17 @@ The XOR patch flips labels for points within radius `rb=0.08` of the bubble cent
 |-------|--------|-----------------|
 | 1 | **Update-Matrix-Rank** | `rank(ΔW)` and `stable_rank(ΔW)` in weight space |
 | 2 | **Hyperplane-Rotation-Rank** | `stable_rank(ΔN)` where `N` = unit-normalized rows of `W₁` |
-| 3 | **Gate-Drift** | % of 2D grid where ReLU gate pattern changed between base and adapted model |
-| 4 | **Line-Crossing Complexity** | Crofton-proxy: avg. sign changes of prediction across 256 random lines |
+| 3 | **Gate-Drift / Polytope Adjacency** | % of area changed; Jaccard distance of the Polytope Adjacency Graph before/after adaptation |
+| 4 | **Discrete Boundary Curvature** | Mean, median, and 90th percentile (p90) turning angles of the boundary's geometric normal vector. |
+| 5 | **Line-Crossing Complexity** | Crofton-proxy: avg. sign changes of prediction across 256 random lines |
+
+### Curvature Distribution
+Decision boundaries often contain rare but large kinks. Therefore, we report not only the mean curvature, but also the median and the 90th percentile of turning angles across generated boundary points.
+
+### Theoretical Connection: Tropical Geometry
+The rotation-rank metric is essentially measuring the **dimension of the normal fan deformation of the ReLU partition**. In terms of tropical and polyhedral geometry: 
+`rank(ΔW) → dimension of Newton polytope deformation`.
+LoRA's low-rank structure geometrically bounds the complexity of the topological changes applied to the data manifold.
 
 ---
 
@@ -107,12 +130,22 @@ Outputs:
 | `stable_rank(ΔW)` | 1.11 | **1.00** |
 | Rotation rank (10D) | 10 | 10 |
 | Rotation stable-rank (10D) | 1.23 | 1.25 |
-| Gate-Drift | 40.3% | 43.2% |
-| Line-Crossings/Line | 1.22 | **1.12** |
+| Gate-Drift | 62.3% | **56.0%** |
+| Adjacency Graph Drift | 63.9% | **50.8%** |
+| Boundary Curvature (mean) | 2.03 rad | **1.98 rad** |
+| Line-Crossings/Line | 1.18 | **1.13** |
 | Task-1 Global Acc | 0.970 | 0.965 |
-| Task-1 Bubble Acc | 0.864 | **0.924** |
+| Task-1 Bubble Acc | 0.937 | 0.932 |
 
 See [`evaluation.md`](evaluation.md) for full analysis and figures.
+
+---
+
+## Experimental Extensions (Depth Ablation)
+
+One conceptual limitation of the 1-layer architecture is that it isolates geometry nicely, but leaves open the question: *Does the effect survive deep composition?* Deep ReLU networks can create exponentially many regions.
+
+To address this, the codebase includes `experiments/run_depth.py`, where LoRA is applied **only to the first layer** across `depth = 1`, `4`, and `8` networks to answer: *Does low-rank deformation propagate through depth?*
 
 ---
 

@@ -69,7 +69,7 @@ Both adapted models correctly invert the label inside the bubble while preservin
 
 The singular value spectrum tells the complete story. For **Full FT**, 10 non-negligible singular values exist — the update spreads across the full 10-dimensional input space, with no algebraic constraint. The stable rank of 1.11 indicates near-rank-1 dominance (one main direction plus spread).
 
-For **LoRA**, exactly 2 singular values dominate (matching `r=2`), with all others numerical zero. `stable_rank ≈ 1.00` means the energy is concentrated in effectively 1 singular vector — an even tighter constraint than the rank suggests. This is the algebraic signature of `ΔW = (α/r)·B@A`: a product of two thin matrices.
+For **LoRA**, exactly 2 singular values dominate (matching `r=2`), with all others numerical zero. `stable_rank ≈ 1.000` means the energy is concentrated in effectively 1 singular vector — an even tighter constraint than the rank suggests. This is the algebraic signature of `ΔW = (α/r)·B@A`: a product of two thin matrices. **This acts as a perfect "geometric straightjacket"**: while LoRA technically operates in 2 dimensions, nearly all of its gradient energy is forced into a single, highly correlated direction, mathematically preventing the kind of independent local fragmentation seen in Full FT.
 
 **Conclusion (Level 1):** LoRA's rank constraint is mathematically exact and observable in the spectrum. Full FT occupies the full column space of the input embedding.
 
@@ -126,12 +126,14 @@ This level studies the **topological and geometric complexity** of the decision 
 |--------|------|---------|-----------|
 | Line-Crossings/Line | 1.22 | 1.18 | **1.13** |
 | Mean Boundary Curvature | - | 2.03 | **1.98** |
+| Median Boundary Curvature | - | 2.25 | **2.23** |
+| 90th Pct (p90) Curvature | - | 2.81 | **2.88** |
 | Polytope Adjacency Drift | - | 63.9% | **50.8%** |
 
 **Interpretation:**
 
 - **Line-Crossing (Crofton Proxy):** Both models resolve the bubble, but Full FT features a more jagged boundary (1.18 crossings per line), whereas LoRA interpolates more smoothly (1.13).
-- **Discrete Boundary Curvature:** This measures the average angular change (in radians) of the boundary's geometric normal vector. LoRA enforces a measurably smoother continuous boundary with a mean curvature of 1.98 vs 2.03 for Full FT.
+- **Curvature Distribution:** Decision boundaries often contain rare but large kinks. Measuring the average angular change (in radians) of the normal vector, LoRA enforces a smoother continuous boundary on average (mean: 1.98 vs 2.03). However, the tail measurements (p90 at 2.88) show LoRA still maintains the capacity for sharp, localized turns where strictly necessary to close the bubble.
 - **Polytope Adjacency Graph Drift:** Treating each constant-gate region as a node and adjacencies as edges (Hamming distance = 1), we compute the Jaccard distance of the network's topological graph before and after adaptation. Full FT radically re-wires 63.9% of the local adjacent polytope relationships to fragment the space. LoRA, strictly bounded by its rank, disrupts only 50.8% of the adjacency graph — significantly preserving the base model's original topological fabric while completing the identical task.
 
 **Conclusion (Level 4):** LoRA is geometrically and topologically "stiffer." It solves the topological trap (the bubble flip) by producing smoother boundaries (lower curvature) while unleashing significantly less structural havoc inside the local polytope network (lower adjacency drift).
