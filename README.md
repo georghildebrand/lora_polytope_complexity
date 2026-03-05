@@ -82,12 +82,13 @@ The XOR patch flips labels for points within radius `rb=0.08` of the bubble cent
 |-------|--------|-----------------|
 | 1 | **Update-Matrix-Rank** | `rank(ΔW)` and `stable_rank(ΔW)` in weight space |
 | 2 | **Hyperplane-Rotation-Rank** | `stable_rank(ΔN)` where `N` = unit-normalized rows of `W₁` |
-| 3 | **Gate-Drift / Polytope Adjacency** | % of area changed; Jaccard distance of the Polytope Adjacency Graph before/after adaptation |
-| 4 | **Discrete Boundary Curvature** | Mean, median, and 90th percentile (p90) turning angles of the boundary's geometric normal vector. |
-| 5 | **Line-Crossing Complexity** | Crofton-proxy: avg. sign changes of prediction across 256 random lines |
+| 3 | **Region Creation vs Movement** | Differential count of unique gate patterns on a 2D grid before and after adaptation |
+| 4 | **Gate-Drift / Adjacency** | % of area changed; Jaccard distance of the Polytope Adjacency Graph before/after adaptation |
+| 5 | **Discrete Boundary Curvature** | Mean, median, and 90th percentile (p90) turning angles of the boundary's geometric normal vector. |
+| 6 | **Line-Crossing Complexity** | Crofton-proxy: avg. sign changes of prediction across 256 random lines |
 
 ### Curvature Distribution
-Decision boundaries often contain rare but large kinks. Therefore, we report not only the mean curvature, but also the median and the 90th percentile of turning angles across generated boundary points.
+The mean curvature of the decision boundary is nearly identical between LoRA and full fine-tuning. The difference appears primarily in the tail of the distribution. Full fine-tuning produces slightly more extreme turning angles, while LoRA suppresses the largest boundary kinks. This supports the interpretation that low-rank adaptation limits extreme local deformations while preserving global flexibility.
 
 ### Theoretical Connection: Tropical Geometry
 The rotation-rank metric is essentially measuring the **dimension of the normal fan deformation of the ReLU partition**. In terms of tropical and polyhedral geometry: 
@@ -145,7 +146,14 @@ See [`evaluation.md`](evaluation.md) for full analysis and figures.
 
 One conceptual limitation of the 1-layer architecture is that it isolates geometry nicely, but leaves open the question: *Does the effect survive deep composition?* Deep ReLU networks can create exponentially many regions.
 
-To address this, the codebase includes `experiments/run_depth.py`, where LoRA is applied **only to the first layer** across `depth = 1`, `4`, and `8` networks to answer: *Does low-rank deformation propagate through depth?*
+To address this, the codebase includes `experiments/run_depth.py`, where LoRA is applied **only to the first layer** across `depth = 1`, `4`, and `8` networks to test whether the geometric restriction imposed at the first layer survives deep composition.
+
+Empirically we observe that even at depth 8:
+- LoRA updates remain strictly low-rank
+- The model still solves the task (>96% accuracy)
+- Boundary deformation remains correlated rather than chaotic
+
+This suggests that deep nonlinear composition can amplify a low-dimensional deformation field without destroying its structure.
 
 ---
 

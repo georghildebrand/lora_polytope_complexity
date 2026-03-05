@@ -12,6 +12,7 @@ from metrics.line_crossing import line_crossing_complexity
 from metrics.rotation_rank import matrix_rank, stable_rank, hyperplane_rotation_rank, get_W1
 from metrics.curvature import boundary_discrete_curvature
 from metrics.adjacency import polytope_adjacency_graph_drift
+from metrics.region_count import count_regions_and_overlap
 from scripts.plot_results import save_baseline_plots
 
 def run_experiment(seed=42, d_in=10, m_hidden=32, r0=0.6, rb=0.08, lora_r=2, target_loss=0.15):
@@ -80,6 +81,11 @@ def run_experiment(seed=42, d_in=10, m_hidden=32, r0=0.6, rb=0.08, lora_r=2, tar
             "acc_bubble": eval_bubble_acc(lora, E, uc, rb, lambda u: y_bubble_flip(u, uc, rb, r0), device)
         }
     }
+    
+    # Region Creation vs Region Movement
+    print("\n   => Region Counting (Creation vs Movement)...")
+    results["full_ft"]["regions"] = count_regions_and_overlap(base, full, E, device, resolution=1000)
+    results["lora"]["regions"] = count_regions_and_overlap(base, lora, E, device, resolution=1000)
     
     with open("results/logs/baseline_results.json", "w") as f:
         json.dump(results, f, indent=4)

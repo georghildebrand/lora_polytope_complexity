@@ -103,10 +103,12 @@ def plot_curvature_histogram(ax, model, E, device, title):
     if len(curvatures) > 0:
         ax.hist(curvatures, bins=40, color="teal", alpha=0.7, log=True)
         mean_c = np.mean(curvatures)
+        median_c = np.median(curvatures)
         p90_c = np.percentile(curvatures, 90)
-        ax.axvline(mean_c, color="gold", linestyle="dashed", linewidth=1.5, label=f"Mean: {mean_c:.2f}")
+        ax.axvline(mean_c, color="gold", linestyle="solid", linewidth=1.5, label=f"Mean: {mean_c:.2f}")
+        ax.axvline(median_c, color="orange", linestyle="dashed", linewidth=1.5, label=f"Median: {median_c:.2f}")
         ax.axvline(p90_c, color="crimson", linestyle="dotted", linewidth=1.5, label=f"p90: {p90_c:.2f}")
-        ax.legend(facecolor="#0d1117", edgecolor="none", labelcolor="white")
+        ax.legend(facecolor="#0d1117", edgecolor="none", labelcolor="white", fontsize=9)
     
     ax.set_facecolor("#0d1117")
     ax.set_title(title, fontsize=11, fontweight="bold", color="white")
