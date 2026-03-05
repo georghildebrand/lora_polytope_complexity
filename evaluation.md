@@ -100,7 +100,7 @@ The key difference is *correlation*: LoRA must rotate all 32 normals through the
 
 ## Level 3: Gate-Drift (Topological Partitioning)
 
-![Gate-drift maps showing which regions changed ReLU activation patterns](figures/gate_drift.png)
+![Gate-drift maps showing which regions changed ReLU activation patterns](figures/gate_drift_heatmaps.png)
 
 *Hot-colored regions = areas where the ReLU gate pattern of fc1 changed between base and adapted model. Cyan circle = bubble. Gold circle = Task-0 boundary.*
 
@@ -137,6 +137,8 @@ This level studies the **topological and geometric complexity** of the decision 
 - **Polytope Adjacency Graph Drift:** Treating each constant-gate region as a node and adjacencies as edges (Hamming distance = 1), we compute the Jaccard distance of the network's topological graph before and after adaptation. Full FT radically re-wires 63.9% of the local adjacent polytope relationships to fragment the space. LoRA, strictly bounded by its rank, disrupts only 50.8% of the adjacency graph — significantly preserving the base model's original topological fabric while completing the identical task.
 
 **Conclusion (Level 4):** LoRA is geometrically and topologically "stiffer." It solves the topological trap (the bubble flip) by producing smoother boundaries (lower curvature) while unleashing significantly less structural havoc inside the local polytope network (lower adjacency drift).
+
+![Curvature distributions for Full FT and LoRA](figures/curvature_histograms.png)
 
 ---
 
