@@ -219,10 +219,11 @@ Full FT has no such constraint. Neuron `i`'s normal can rotate in any of the 10 
 |--------|---------|------|
 | Bubble accuracy | 0.937 | 0.932 |
 | Gate drift | 62.3% | 56.0% |
-| Adjacency graph drift | 63.9% | **50.8%** |
 | Mean curvature | 2.03 | **1.98** |
+| Created gate regions | 56 | **37** |
+| Adjacency graph drift | 63.9% | **50.8%** |
 
-LoRA achieves highly competitive bubble accuracy with significantly less topological destruction (adjacency drift) — the hallmark of an efficient, correlated geometric adaptation. Full FT's unconstrained rank-10 freedom fragments the polytope structure aggressively (63.9% drift) and introduces tighter curvature (2.03) simply to solve the identical local topological trap.
+LoRA achieves highly competitive bubble accuracy with significantly less topological destruction (adjacency drift) and less fragmentation (fewer new regions created) — the hallmark of an efficient, correlated geometric adaptation. Full FT's unconstrained rank-10 freedom fragments the polytope structure aggressively (creating 56 new regions vs. LoRA's 37; 63.9% drift) and introduces tighter curvature (2.03) simply to solve the identical local topological trap.
 
 ---
 

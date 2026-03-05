@@ -107,14 +107,13 @@ conda activate plora
 # Install dependencies
 pip install -r requirements.txt
 
-# Run baseline experiment
-python -m experiments.run_baseline
+# Run all experimental tracks (baseline, bias, depth)
+make all
 
-# Run bias ablation
-python -m experiments.run_bias_ablation
-
-# Run depth study
-python -m experiments.run_depth
+# Or run them individually
+make baseline
+make bias
+make depth
 ```
 
 Outputs:
@@ -135,6 +134,8 @@ Outputs:
 | Adjacency Graph Drift | 63.9% | **50.8%** |
 | Boundary Curvature (mean) | 2.03 rad | **1.98 rad** |
 | Line-Crossings/Line | 1.18 | **1.13** |
+| Gate Regions (Created) | 56 | **37** |
+| Gate Regions (Retained)| 103 | **117** |
 | Task-1 Global Acc | 0.970 | 0.965 |
 | Task-1 Bubble Acc | 0.937 | 0.932 |
 
