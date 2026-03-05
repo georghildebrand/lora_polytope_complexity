@@ -10,7 +10,14 @@
             "median": 2.249401092529297,
             "p90": 2.8146166801452637
         },
-        "acc_bubble": 0.9369999766349792
+        "acc_bubble": 0.9369999766349792,
+        "regions": {
+            "base_total": 156,
+            "adapted_total": 159,
+            "shared": 103,
+            "new": 56,
+            "lost": 53
+        }
     },
     "lora": {
         "rank": 2,
@@ -23,6 +30,13 @@
             "median": 2.229930877685547,
             "p90": 2.8779711723327637
         },
-        "acc_bubble": 0.9317499995231628
+        "acc_bubble": 0.9317499995231628,
+        "regions": {
+            "base_total": 156,
+            "adapted_total": 154,
+            "shared": 117,
+            "new": 37,
+            "lost": 39
+        }
     }
 }
