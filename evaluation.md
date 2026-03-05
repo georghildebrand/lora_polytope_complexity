@@ -142,6 +142,33 @@ This level studies the **topological and geometric complexity** of the decision 
 
 ---
 
+## Experimental Extensions: Network Depth
+
+One conceptual limitation of the baseline 1-layer architecture is that it isolates geometry nicely, but leaves open the question: *Does the effect survive deep composition?*
+
+Deep ReLU networks can create exponentially many regions. Even if hyperplanes move with low rank in the first layer, deeper layers may still generate new, highly fragmented partitions through composition.
+
+We tested this by applying LoRA (and Full FT) **only to the first layer** across `depth = 1`, `depth = 4`, and `depth = 8` networks to answer: *Does the low-rank geometric constraint propagate through deep non-linearities?*
+
+### Depth Study Results
+
+| Network Depth | Metric | Full FT | LoRA (r=2) |
+|---------------|--------|---------|------------|
+| **Depth 1** | `stable_rank(ΔW)` | 1.128 | **1.000** |
+| | Bubble Acc | 0.907 | 0.976 |
+| **Depth 4** | `stable_rank(ΔW)` | 1.228 | **1.000** |
+| | Bubble Acc | 1.000 | 0.972 |
+| **Depth 8** | `stable_rank(ΔW)` | 1.356 | **1.000** |
+| | Bubble Acc | 0.975 | 0.962 |
+
+### Deep Composition Interpretation
+
+**1. The Geometric Straightjacket Propagates:** Even at substantial depths (`d=8`), the `stable_rank(ΔW)` for LoRA remains locked at `1.000`. The network must solve the adaptation challenge using a strictly correlated, rank-1-like movement of the initial feature space. By contrast, Full FT exhibits *increasing* complexity in its update as depth increases (Stable Rank widening from `1.12` → `1.35`), taking advantage of the deep composition to warp the initial input space more chaotically.
+
+**2. Accuracy Holding Constant:** Despite its massive geometric constraint, LoRA achieves >96% bubble accuracy at all depths. **The restricted geometry does not explode complexity, nor does it fail to adapt.** It proves that a low-dimensional topological shift at the input level is sufficiently powerful to reorganize the output behavior of even highly composed deep networks.
+
+---
+
 ## Summary: Metric Dashboard
 
 ![Metric summary bar chart comparing Full FT and LoRA across all 5 key metrics](figures/metric_summary.png)
