@@ -11,6 +11,10 @@
             "p90": 2.8146166801452637
         },
         "acc_bubble": 0.9369999766349792,
+        "normal_motion": {
+            "rank": 10,
+            "stable_rank": 1.0558890104293823
+        },
         "regions": {
             "base_total": 156,
             "adapted_total": 159,
@@ -31,6 +35,10 @@
             "p90": 2.8779711723327637
         },
         "acc_bubble": 0.9317499995231628,
+        "normal_motion": {
+            "rank": 10,
+            "stable_rank": 1.033671498298645
+        },
         "regions": {
             "base_total": 156,
             "adapted_total": 154,

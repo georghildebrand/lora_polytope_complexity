@@ -1,3 +1,4 @@
+import copy
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -60,10 +61,9 @@ def plot_drift_heatmap(ax, base_m, adapt_m, E, uc, rb, r0, device, title, resolu
     ax.axis("off")
 
 def plot_curvature_histogram(ax, model, E, device, title):
-    # Get raw curvatures by overriding the aggregate output
+    # Get raw curvatures. Use a deep copy so the original model is never moved.
     curvatures = []
-    orig_device = next(model.parameters()).device
-    model = model.to("cpu")
+    model = copy.deepcopy(model).to("cpu")
     E_cpu = E.to("cpu")
     dtype = E_cpu.dtype
     for _ in range(400):  # More lines for a smooth histogram
@@ -98,8 +98,6 @@ def plot_curvature_histogram(ax, model, E, device, title):
             angle = torch.acos(cos_val)
             curvatures.append(angle.item())
             
-    model = model.to(orig_device)
-    
     if len(curvatures) > 0:
         ax.hist(curvatures, bins=40, color="teal", alpha=0.7, log=True)
         mean_c = np.mean(curvatures)
@@ -149,3 +147,119 @@ def save_baseline_plots(base, full, lora, E, uc, rb, r0, device):
     print("Saved results/figures/gate_drift_heatmaps.png")
     print("Saved results/figures/curvature_histograms.png")
 
+
+def save_rank_sweep_plots(results):
+    """Plot rank vs line_crossing, curvature, region_creation."""
+    os.makedirs("results/figures", exist_ok=True)
+    ranks = sorted(int(k.split("_")[1]) for k in results)
+    line_crossings = [results[f"rank_{r}"]["line_crossing"] for r in ranks]
+    curvatures = [results[f"rank_{r}"]["curvature"]["mean"] for r in ranks]
+    region_creation = [results[f"rank_{r}"]["region_count"]["new"] for r in ranks]
+
+    plt.style.use("dark_background")
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4), facecolor="#0d1117")
+
+    specs = [
+        (line_crossings, "Line Crossings / Line", "Rank vs Line Crossing", "teal"),
+        (curvatures, "Mean Curvature (rad)", "Rank vs Curvature", "gold"),
+        (region_creation, "New Regions Created", "Rank vs Region Creation", "crimson"),
+    ]
+    for ax, (values, ylabel, title, color) in zip(axes, specs):
+        ax.plot(ranks, values, "o-", color=color, linewidth=2, markersize=8)
+        ax.set_xlabel("LoRA Rank", color="white")
+        ax.set_ylabel(ylabel, color="white")
+        ax.set_title(title, fontsize=11, fontweight="bold", color="white")
+        ax.set_xticks(ranks)
+        ax.tick_params(colors="white")
+        ax.set_facecolor("#0d1117")
+        for spine in ["bottom", "left"]:
+            ax.spines[spine].set_color("white")
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig("results/figures/rank_sweep_complexity.png", dpi=150, facecolor="#0d1117")
+    plt.close()
+    print("Saved results/figures/rank_sweep_complexity.png")
+
+
+def save_depth_geometry_plots(results):
+    """Plot depth vs curvature, line_crossing, region_creation for Full FT and LoRA."""
+    os.makedirs("results/figures", exist_ok=True)
+    depths = sorted(int(k.split("_")[1]) for k in results)
+
+    def _extract(method):
+        return {
+            "curvature": [results[f"depth_{d}"][method]["curvature"]["mean"] for d in depths],
+            "line_crossing": [results[f"depth_{d}"][method]["line_crossing"] for d in depths],
+            "region_new": [results[f"depth_{d}"][method]["region_count"]["new"] for d in depths],
+        }
+
+    full_vals = _extract("full_ft")
+    lora_vals = _extract("lora")
+
+    plt.style.use("dark_background")
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4), facecolor="#0d1117")
+
+    specs = [
+        ("curvature", "Mean Curvature (rad)", "Depth vs Curvature"),
+        ("line_crossing", "Line Crossings / Line", "Depth vs Line Crossing"),
+        ("region_new", "New Regions Created", "Depth vs Region Creation"),
+    ]
+    for ax, (key, ylabel, title) in zip(axes, specs):
+        ax.plot(depths, full_vals[key], "o-", color="#e05c5c", linewidth=2, markersize=8, label="Full FT")
+        ax.plot(depths, lora_vals[key], "s-", color="teal", linewidth=2, markersize=8, label="LoRA")
+        ax.set_xlabel("Network Depth", color="white")
+        ax.set_ylabel(ylabel, color="white")
+        ax.set_title(title, fontsize=11, fontweight="bold", color="white")
+        ax.set_xticks(depths)
+        ax.tick_params(colors="white")
+        ax.set_facecolor("#0d1117")
+        ax.legend(facecolor="#0d1117", edgecolor="none", labelcolor="white", fontsize=9)
+        for spine in ["bottom", "left"]:
+            ax.spines[spine].set_color("white")
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig("results/figures/depth_geometry.png", dpi=150, facecolor="#0d1117")
+    plt.close()
+    print("Saved results/figures/depth_geometry.png")
+
+
+def save_random_lowrank_plots(results):
+    """Bar chart comparing Full FT, LoRA, and Random Low-Rank across geometric metrics."""
+    os.makedirs("results/figures", exist_ok=True)
+    labels = ["Full FT", "LoRA", "Random\nLow-Rank"]
+    keys = ["full_ft", "lora", "random_low_rank"]
+    colors = ["#e05c5c", "teal", "#9370db"]
+
+    line_crossings = [results[k]["line_crossing"] for k in keys]
+    gate_drifts = [results[k]["gate_drift"] for k in keys]
+    region_new = [results[k]["region_count"]["new"] for k in keys]
+    curv_mean = [results[k]["curvature"]["mean"] for k in keys]
+
+    plt.style.use("dark_background")
+    fig, axes = plt.subplots(1, 4, figsize=(18, 4), facecolor="#0d1117")
+
+    specs = [
+        (line_crossings, "Line Crossings / Line", "Line Crossing"),
+        (gate_drifts, "Gate Drift (fraction)", "Gate Drift"),
+        (region_new, "New Regions Created", "Region Creation"),
+        (curv_mean, "Mean Curvature (rad)", "Mean Curvature"),
+    ]
+    for ax, (vals, ylabel, title) in zip(axes, specs):
+        ax.bar(labels, vals, color=colors, alpha=0.85)
+        ax.set_ylabel(ylabel, color="white")
+        ax.set_title(title, fontsize=10, fontweight="bold", color="white")
+        ax.tick_params(colors="white")
+        ax.set_facecolor("#0d1117")
+        for spine in ["bottom", "left"]:
+            ax.spines[spine].set_color("white")
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig("results/figures/random_lowrank_comparison.png", dpi=150, facecolor="#0d1117")
+    plt.close()
+    print("Saved results/figures/random_lowrank_comparison.png")

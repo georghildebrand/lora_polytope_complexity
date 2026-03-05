@@ -1,12 +1,13 @@
+import copy
 import torch
 import numpy as np
 
 def boundary_discrete_curvature(model, E, device, n_lines=200, points_per_line=400):
     curvatures = []
-    
-    # Avoid PyTorch MPS segfaults with autograd by forcing CPU
-    orig_device = next(model.parameters()).device
-    model = model.to("cpu")
+
+    # Avoid PyTorch MPS segfaults with autograd by forcing CPU.
+    # Use a deep copy so the original model is never moved.
+    model_cpu = copy.deepcopy(model).to("cpu")
     E = E.to("cpu")
     device = "cpu"
     dtype = E.dtype
@@ -26,7 +27,7 @@ def boundary_discrete_curvature(model, E, device, n_lines=200, points_per_line=4
         # Fast pass
         with torch.no_grad():
             x_eval = (E @ u_valid.T).T
-            logits = model(x_eval)
+            logits = model_cpu(x_eval)
             s = (logits > 0).float()
             crossings = torch.where(s[1:] != s[:-1])[0]
 
@@ -40,7 +41,7 @@ def boundary_discrete_curvature(model, E, device, n_lines=200, points_per_line=4
             xi = x_cross.detach().clone().requires_grad_(True)
 
             with torch.enable_grad():
-                f = model(xi.unsqueeze(0))
+                f = model_cpu(xi.unsqueeze(0))
                 g = torch.autograd.grad(f, xi)[0]
             n = g / (g.norm() + 1e-12)
             normals.append(n.detach().cpu())
@@ -50,9 +51,6 @@ def boundary_discrete_curvature(model, E, device, n_lines=200, points_per_line=4
             cos_val = torch.clamp(torch.dot(normals[i], normals[i+1]), -1.0, 1.0)
             angle = torch.acos(cos_val)
             curvatures.append(angle.item())
-
-    # Restore model to original device
-    model = model.to(orig_device)
 
     if len(curvatures) == 0:
         return {"mean": 0.0, "median": 0.0, "p90": 0.0}

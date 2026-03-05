@@ -11,16 +11,9 @@ def count_regions_and_overlap(model_base, model_adapted, E, device, resolution=1
         gb = model_base.gate_pattern(X)
         ga = model_adapted.gate_pattern(X)
         
-    # Convert binary gate patterns to unique integer hashes explicitly
-    # Assuming m_hidden <= 64, we can pack them into a 64-bit int
-    powers = 2 ** torch.arange(gb.shape[1], device=device)
-    
-    hash_b = (gb.long() * powers).sum(dim=1)
-    hash_a = (ga.long() * powers).sum(dim=1)
-    
-    # Use pure python sets for unique counting and set operations
-    regions_base = set(hash_b.tolist())
-    regions_adapted = set(hash_a.tolist())
+    # Convert binary gate patterns to tuples for hashing — works for any hidden size
+    regions_base = set(tuple(row.tolist()) for row in gb.cpu())
+    regions_adapted = set(tuple(row.tolist()) for row in ga.cpu())
     
     shared_regions = regions_base.intersection(regions_adapted)
     new_regions = regions_adapted - regions_base

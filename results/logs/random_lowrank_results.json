@@ -1,0 +1,59 @@
+{
+    "full_ft": {
+        "rank_dW": 10,
+        "stable_rank_dW": 1.1280860900878906,
+        "gate_drift": 0.6008555293083191,
+        "adjacency_drift": 0.5959302325581395,
+        "line_crossing": 1.15625,
+        "curvature": {
+            "mean": 1.9988195085734652,
+            "median": 2.1948684453964233,
+            "p90": 2.842609667778015
+        },
+        "region_count": {
+            "base_total": 156,
+            "adapted_total": 162,
+            "shared": 111,
+            "new": 51,
+            "lost": 45
+        }
+    },
+    "lora": {
+        "rank_dW": 2,
+        "stable_rank_dW": 1.0,
+        "gate_drift": 0.5749111175537109,
+        "adjacency_drift": 0.5714285714285714,
+        "line_crossing": 1.296875,
+        "curvature": {
+            "mean": 1.9977803192708803,
+            "median": 2.169376850128174,
+            "p90": 2.894263744354248
+        },
+        "region_count": {
+            "base_total": 156,
+            "adapted_total": 156,
+            "shared": 104,
+            "new": 52,
+            "lost": 52
+        }
+    },
+    "random_low_rank": {
+        "rank_dW": 2,
+        "stable_rank_dW": 1.6465764045715332,
+        "gate_drift": 0.9529777765274048,
+        "adjacency_drift": 0.9664879356568364,
+        "line_crossing": 1.2109375,
+        "curvature": {
+            "mean": 1.9764344086570125,
+            "median": 2.1237930059432983,
+            "p90": 2.818158507347107
+        },
+        "region_count": {
+            "base_total": 156,
+            "adapted_total": 383,
+            "shared": 26,
+            "new": 357,
+            "lost": 130
+        }
+    }
+}

@@ -1,0 +1,82 @@
+{
+    "rank_1": {
+        "rank_r": 1,
+        "rank_dW": 1,
+        "stable_rank_dW": 1.0,
+        "gate_drift": 0.5687333345413208,
+        "adjacency_drift": 0.5393939393939393,
+        "line_crossing": 1.03125,
+        "curvature": {
+            "mean": 1.9603980300327142,
+            "median": 2.1614065170288086,
+            "p90": 2.809763193130493
+        },
+        "region_count": {
+            "base_total": 156,
+            "adapted_total": 159,
+            "shared": 111,
+            "new": 48,
+            "lost": 45
+        }
+    },
+    "rank_2": {
+        "rank_r": 2,
+        "rank_dW": 2,
+        "stable_rank_dW": 1.0,
+        "gate_drift": 0.5595999956130981,
+        "adjacency_drift": 0.5182926829268293,
+        "line_crossing": 1.125,
+        "curvature": {
+            "mean": 2.008651711724021,
+            "median": 2.2033772468566895,
+            "p90": 2.892941951751709
+        },
+        "region_count": {
+            "base_total": 156,
+            "adapted_total": 152,
+            "shared": 115,
+            "new": 37,
+            "lost": 41
+        }
+    },
+    "rank_4": {
+        "rank_r": 4,
+        "rank_dW": 4,
+        "stable_rank_dW": 1.0,
+        "gate_drift": 0.5810444355010986,
+        "adjacency_drift": 0.5641791044776119,
+        "line_crossing": 1.2109375,
+        "curvature": {
+            "mean": 1.8969864492569495,
+            "median": 1.8605501651763916,
+            "p90": 2.8157850265502935
+        },
+        "region_count": {
+            "base_total": 156,
+            "adapted_total": 155,
+            "shared": 105,
+            "new": 50,
+            "lost": 51
+        }
+    },
+    "rank_8": {
+        "rank_r": 8,
+        "rank_dW": 5,
+        "stable_rank_dW": 1.0,
+        "gate_drift": 0.5716778039932251,
+        "adjacency_drift": 0.5761194029850747,
+        "line_crossing": 1.0234375,
+        "curvature": {
+            "mean": 1.8906510759954867,
+            "median": 1.8818025588989258,
+            "p90": 2.7609990596771246
+        },
+        "region_count": {
+            "base_total": 156,
+            "adapted_total": 159,
+            "shared": 107,
+            "new": 52,
+            "lost": 49
+        }
+    }
+}

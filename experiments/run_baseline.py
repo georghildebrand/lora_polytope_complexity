@@ -13,6 +13,7 @@ from metrics.rotation_rank import matrix_rank, stable_rank, hyperplane_rotation_
 from metrics.curvature import boundary_discrete_curvature
 from metrics.adjacency import polytope_adjacency_graph_drift
 from metrics.region_count import count_regions_and_overlap
+from metrics.normal_motion import normal_motion_rank
 from scripts.plot_results import save_baseline_plots
 
 def run_experiment(seed=42, d_in=10, m_hidden=32, r0=0.6, rb=0.08, lora_r=2, target_loss=0.15):
@@ -69,7 +70,8 @@ def run_experiment(seed=42, d_in=10, m_hidden=32, r0=0.6, rb=0.08, lora_r=2, tar
             "adjacency_drift": polytope_adjacency_graph_drift(base, full, E, device),
             "line_crossing": line_crossing_complexity(full, E, device),
             "curvature": boundary_discrete_curvature(full, E, device),
-            "acc_bubble": eval_bubble_acc(full, E, uc, rb, lambda u: y_bubble_flip(u, uc, rb, r0), device)
+            "acc_bubble": eval_bubble_acc(full, E, uc, rb, lambda u: y_bubble_flip(u, uc, rb, r0), device),
+            "normal_motion": normal_motion_rank(base, full),
         },
         "lora": {
             "rank": matrix_rank(dW_lora),
@@ -78,7 +80,8 @@ def run_experiment(seed=42, d_in=10, m_hidden=32, r0=0.6, rb=0.08, lora_r=2, tar
             "adjacency_drift": polytope_adjacency_graph_drift(base, lora, E, device),
             "line_crossing": line_crossing_complexity(lora, E, device),
             "curvature": boundary_discrete_curvature(lora, E, device),
-            "acc_bubble": eval_bubble_acc(lora, E, uc, rb, lambda u: y_bubble_flip(u, uc, rb, r0), device)
+            "acc_bubble": eval_bubble_acc(lora, E, uc, rb, lambda u: y_bubble_flip(u, uc, rb, r0), device),
+            "normal_motion": normal_motion_rank(base, lora),
         }
     }
     

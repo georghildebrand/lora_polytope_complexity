@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-This experiment provides geometric proof that **LoRA's rank constraint fundamentally restricts how ReLU hyperplanes are rotated during adaptation** — not just which weights change, but the *structure* of the change in orientation space. Despite reaching the same training loss as Full Fine-Tuning, LoRA produces:
+This experiment provides empirical evidence that **LoRA's rank constraint fundamentally restricts how ReLU hyperplanes are rotated during adaptation** — not just which weights change, but the *structure* of the change in orientation space. Despite reaching the same training loss as Full Fine-Tuning, LoRA produces:
 
 - A provably rank-2 update in weight space (vs. rank-10 for Full FT)
 - **Lower line-crossing complexity** — smoother, less fragmented boundaries
@@ -35,7 +35,7 @@ The key insight: **LoRA cannot create independent, arbitrary rotations of each h
 | Head-only bubble accuracy (no training) | **0.000** ✓ Assert passed |
 | Target loss reached | Full FT: step 229 · LoRA: step 142 |
 
-The head-only assert returning **0.000** is the critical geometric proof: since the ReLU gate pattern is constant throughout the bubble, every point in the bubble maps to the **same hidden-layer activation vector** and thus to the same scalar output. Since the base model predicts class 1 for the bubble (it's inside the circle), and Task 1 XOR-flips that to class 0, no reparametrization of `fc2` without touching `fc1` can solve this — the network's geometry is topologically locked.
+The head-only assert returning **0.000** is the key empirical observation: since the ReLU gate pattern is constant throughout the bubble, every point in the bubble maps to the **same hidden-layer activation vector** and thus to the same scalar output. Since the base model predicts class 1 for the bubble (it's inside the circle), and Task 1 XOR-flips that to class 0, no reparametrization of `fc2` without touching `fc1` can solve this task under this configuration — the network's geometry is locally locked in this synthetic setup.
 
 ---
 
@@ -229,11 +229,13 @@ LoRA achieves highly competitive bubble accuracy with significantly less topolog
 
 ## Conclusion
 
-The experiment confirms the hypothesis:
+The experiment provides empirical support for the hypothesis:
 
-> **LoRA enforces correlated, low-dimensional rotations of ReLU gate hyperplanes.** The rank-2 `ΔW` (Level 1) forces all 32 hyperplane normals to move through a shared 2D subspace (Level 2). This correlation propagates to the topological level: gate-drift is comparable but globally distributed (Level 3), and the resulting boundary is measurably smoother (Line-Crossings: 1.12 vs. 1.22, Level 4).
+> **LoRA produces correlated, low-dimensional rotations of ReLU gate hyperplanes.** The rank-2 `ΔW` (Level 1) forces all 32 hyperplane normals to move through a shared 2D subspace (Level 2). This correlation propagates to the topological level: gate-drift is comparable but globally distributed (Level 3), and the resulting boundary is measurably smoother (Line-Crossings: 1.12 vs. 1.22, Level 4).
 
-> **Full Fine-Tuning allows independent, local fragmentation.** The rank-10 `ΔW` lets each normal rotate freely, which can create local precision (or imprecision) at the cost of more complex, higher-rank boundary geometry.
+> **Full Fine-Tuning allows independent, local fragmentation.** The rank-10 `ΔW` lets each normal rotate more freely, which can create local precision (or imprecision) at the cost of more complex, higher-rank boundary geometry.
+
+> **Experimental scope:** These results are empirical observations on a controlled synthetic setup (single MLP, 2D circle task). They do not constitute a formal proof about all neural networks or all task distributions.
 
 The topological trap (constant-gate bubble + frozen fc2) was essential to make this comparison rigorous: without it, both methods might have solved the task via the output head alone, making fc1 geometry analysis meaningless.
 

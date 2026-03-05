@@ -3,36 +3,120 @@
         "full_ft": {
             "rank": 10,
             "stable_rank": 1.1280860900878906,
-            "acc": 0.9075000286102295
+            "acc": 0.9075000286102295,
+            "gate_drift": 0.6008555293083191,
+            "line_crossing": 1.0390625,
+            "curvature": {
+                "mean": 2.0062923991161843,
+                "median": 2.1845359802246094,
+                "p90": 2.833405876159668
+            },
+            "region_count": {
+                "base_total": 156,
+                "adapted_total": 162,
+                "shared": 111,
+                "new": 51,
+                "lost": 45
+            }
         },
         "lora": {
             "rank": 2,
             "stable_rank": 1.0,
-            "acc": 0.9762499928474426
+            "acc": 0.9762499928474426,
+            "gate_drift": 0.5842111110687256,
+            "line_crossing": 1.0234375,
+            "curvature": {
+                "mean": 2.1220329032057808,
+                "median": 2.245734930038452,
+                "p90": 2.9451088905334473
+            },
+            "region_count": {
+                "base_total": 156,
+                "adapted_total": 156,
+                "shared": 103,
+                "new": 53,
+                "lost": 53
+            }
         }
     },
     "depth_4": {
         "full_ft": {
             "rank": 10,
             "stable_rank": 1.2286120653152466,
-            "acc": 1.0
+            "acc": 1.0,
+            "gate_drift": 0.5606444478034973,
+            "line_crossing": 1.1015625,
+            "curvature": {
+                "mean": 1.9364048518917778,
+                "median": 2.0145171880722046,
+                "p90": 2.6431413173675535
+            },
+            "region_count": {
+                "base_total": 145,
+                "adapted_total": 153,
+                "shared": 106,
+                "new": 47,
+                "lost": 39
+            }
         },
         "lora": {
             "rank": 2,
             "stable_rank": 1.0000001192092896,
-            "acc": 0.9727500081062317
+            "acc": 0.9727500081062317,
+            "gate_drift": 0.4713222086429596,
+            "line_crossing": 1.1328125,
+            "curvature": {
+                "mean": 1.9263904808924115,
+                "median": 2.1200366020202637,
+                "p90": 2.558030843734741
+            },
+            "region_count": {
+                "base_total": 145,
+                "adapted_total": 151,
+                "shared": 121,
+                "new": 30,
+                "lost": 24
+            }
         }
     },
     "depth_8": {
         "full_ft": {
             "rank": 10,
             "stable_rank": 1.356331706047058,
-            "acc": 0.9750000238418579
+            "acc": 0.9750000238418579,
+            "gate_drift": 0.8934000134468079,
+            "line_crossing": 1.125,
+            "curvature": {
+                "mean": 1.8551092745228248,
+                "median": 2.088426351547241,
+                "p90": 2.699075388908386
+            },
+            "region_count": {
+                "base_total": 130,
+                "adapted_total": 165,
+                "shared": 46,
+                "new": 119,
+                "lost": 84
+            }
         },
         "lora": {
             "rank": 2,
             "stable_rank": 1.000003457069397,
-            "acc": 0.9627500176429749
+            "acc": 0.9627500176429749,
+            "gate_drift": 0.8105888962745667,
+            "line_crossing": 1.1171875,
+            "curvature": {
+                "mean": 1.933832042167584,
+                "median": 2.0754352807998657,
+                "p90": 2.69185528755188
+            },
+            "region_count": {
+                "base_total": 130,
+                "adapted_total": 166,
+                "shared": 55,
+                "new": 111,
+                "lost": 75
+            }
         }
     }
 }
